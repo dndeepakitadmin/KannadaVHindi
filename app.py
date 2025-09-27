@@ -1,17 +1,13 @@
 import streamlit as st
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
-
-# Initialize translator
-translator = Translator()
 
 # ------------------ Functions ------------------
 
 def translate_to_hindi(kannada_text):
     try:
-        result = translator.translate(kannada_text, src="kn", dest="hi")
-        return result.text
+        return GoogleTranslator(source='kn', target='hi').translate(kannada_text)
     except Exception as e:
         return f"(Translation Error: {e})"
 
@@ -30,18 +26,15 @@ def hindi_to_roman(hindi_text):
 # ------------------ Streamlit UI ------------------
 
 st.set_page_config(page_title="Kannada → Hindi Helper", layout="centered")
-
 st.title("Kannada → Hindi Learning App")
 st.write("Enter Kannada text, get Hindi translation, Kannada script, and Roman phonetics.")
 
 input_text = st.text_area("Enter Kannada Text:", height=120)
 
 if st.button("Translate & Transliterate"):
-
     if not input_text.strip():
         st.warning("Please enter some Kannada text.")
     else:
-        # Translate
         hindi_text = translate_to_hindi(input_text)
         kannada_output = hindi_to_kannada_script(hindi_text)
         roman_output = hindi_to_roman(hindi_text)
@@ -56,4 +49,4 @@ if st.button("Translate & Transliterate"):
         st.text(roman_output)
 
 st.markdown("---")
-st.caption("Free app by LearnHindiVKannada | Powered by Streamlit, Google Translate & Indic Transliteration")
+st.caption("Free app by LearnHindiVKannada | Powered by Streamlit, Deep Translator & Indic Transliteration")
