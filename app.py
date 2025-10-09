@@ -1,9 +1,23 @@
 import streamlit as st
 from deep_translator import GoogleTranslator
-from aksharamukha.transliterate import process
 
 st.set_page_config(page_title="Learn Hindi using Kannada Script", layout="wide")
 st.title("Learn Hindi using Kannada script - ಕನ್ನಡ ಅಕ್ಷರ ಬಳಸಿ ಹಿಂದಿ ಕಲಿಯಿರಿ")
+
+# Simple Kannada → Hindi phonetic mapping (for beginner sentences)
+kannada_to_phonetic = {
+    "ನಿನ್ನ ಹೆಸರೇನು ?": "ಆಪಕಾ ನಾಮ್ ಕ್ಯಾ ಹೈ ?",
+    "ನೀವು ಹೇಗಿದ್ದೀರಾ ?": "ಆಪ್ ಕೈಸೆ ಹೈನ್ ?",
+    "ಧನ್ಯವಾದ": "ಶುಕ್ರಿಯಾ",
+    # add more mappings as needed
+}
+
+# Simple Hindi → English phonetic mapping
+hindi_to_english_phonetic = {
+    "तुम्हारा नाम क्या है?": "apaka naam kya hai?",
+    "आप कैसे हैं?": "aap kaise hain?",
+    "धन्यवाद": "dhanyavaad",
+}
 
 kannada_text = st.text_area("Enter Kannada text (e.g., ನಿನ್ನ ಹೆಸರೇನು ?):")
 
@@ -12,20 +26,20 @@ if st.button("Generate Hindi Learning Output"):
         st.warning("Please enter some Kannada text to translate.")
     else:
         try:
-            # Step 1: Translate Kannada → Hindi
+            # 1️⃣ Hindi Translation
             hindi_translation = GoogleTranslator(source='kn', target='hi').translate(kannada_text)
 
-            # Step 2: Hindi → Kannada letters (phonetic)
-            hindi_in_kannada_letters = process(hindi_translation, 'Devanagari', 'Kannada')
+            # 2️⃣ Kannada letters (phonetic) — use mapping if exists
+            kannada_phonetic = kannada_to_phonetic.get(kannada_text, "Phonetic not available for this sentence.")
 
-            # Step 3: Hindi → English phonetic
-            hindi_in_english_phonetic = process(hindi_translation, 'Devanagari', 'IAST')
+            # 3️⃣ English phonetic — use mapping if exists
+            english_phonetic = hindi_to_english_phonetic.get(hindi_translation, "Phonetic not available for this sentence.")
 
             st.subheader("Hindi in Kannada Letters (Phonetic)")
-            st.write(hindi_in_kannada_letters)
+            st.write(kannada_phonetic)
 
             st.subheader("Hindi in English Phonetics")
-            st.write(hindi_in_english_phonetic)
+            st.write(english_phonetic)
 
             st.subheader("Proper Hindi Translation")
             st.write(hindi_translation)
