@@ -7,7 +7,7 @@ from aksharamukha.transliterate import process
 st.set_page_config(page_title="Hindi to Kannada Learning", layout="centered")
 
 st.title("📝 Learn Kannada using Hindi script")
-st.subheader("ಹಿಂದಿ ಅಕ್ಷರ ಬಳಸಿ ಕನ್ನಡ ಕಲಿಯಿರಿ")
+st.subheader("हिंदी अक्षरों का उपयोग करके कन्नड़ सीखें")
 
 # Input
 text = st.text_area("Enter Hindi text here (e.g., आप कैसे हैं?)", height=120)
