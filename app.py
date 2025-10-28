@@ -2,39 +2,67 @@ import streamlit as st
 from deep_translator import GoogleTranslator
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
+from aksharamukha.transliterate import process
 
-st.set_page_config(page_title="Learn Hindi using Kannada Script", layout="wide")
-st.title("Learn Hindi using Kannada script - ಕನ್ನಡ ಅಕ್ಷರ ಬಳಸಿ ಹಿಂದಿ ಕಲಿಯಿರಿ")
+# ------------------ PAGE CONFIG ------------------ #
+st.set_page_config(
+    page_title="Hindi to Kannada Learning",
+    page_icon="📝",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+    menu_items={
+        "Get Help": None,
+        "Report a bug": None,
+        "About": None
+    }
+)
 
-# Input from user
-kannada_text = st.text_area("Enter Kannada text (e.g., ನಿನ್ನ ಹೆಸರೇನು ?)")
+# ------------------ HIDE STREAMLIT UI ------------------ #
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+# ------------------ APP CONTENT ------------------ #
+st.title("📝 Learn Kannada using Hindi script")
+st.subheader("हिंदी अक्षरों का उपयोग करके कन्नड़ सीखें")
+
+# Input
+text = st.text_area("Enter Hindi text here (e.g., आप कैसे हैं?)", height=120)
 
 if st.button("Translate"):
-    if kannada_text.strip() == "":
-        st.warning("Please enter some Kannada text to translate.")
-    else:
+    if text.strip():
         try:
-            # Step 1: Transliterate Kannada → Devanagari
-            devanagari_text = transliterate(kannada_text, sanscript.KANNADA, sanscript.DEVANAGARI)
+            # Hindi → Kannada translation
+            kannada = GoogleTranslator(source="hi", target="kn").translate(text)
 
-            # Step 2: Translate meaningfully to Hindi
-            hindi_translation = GoogleTranslator(source='auto', target='hi').translate(devanagari_text)
+            # Kannada → English phonetics (IAST)
+            kannada_english = transliterate(kannada, sanscript.KANNADA, sanscript.ITRANS)
 
-            # Step 3: Transliterate Hindi → Kannada letters (phonetic)
-            hindi_in_kannada_letters = transliterate(hindi_translation, sanscript.DEVANAGARI, sanscript.KANNADA)
+            # Kannada → Hindi letters (transliteration)
+            kannada_in_hindi = process('Kannada', 'Devanagari', kannada)
 
-            # Step 4: Transliterate Hindi → English phonetics
-            hindi_in_english_phonetic = transliterate(hindi_translation, sanscript.DEVANAGARI, sanscript.ITRANS)
+            # ---------------- OUTPUT ---------------- #
+            st.markdown("### 🔹 Translation Results")
 
-            # Display outputs
-            st.subheader("Hindi in Kannada Letters (Phonetic)")
-            st.write(hindi_in_kannada_letters)
+            # Hindi Input
+            st.markdown(f"**Hindi Input:**  \n:blue[{text}]")
 
-            st.subheader("Hindi in English Phonetics")
-            st.write(hindi_in_english_phonetic)
+            # Kannada Translation
+            st.markdown(f"**Kannada Translation:**  \n:green[{kannada}]")
 
-            st.subheader("Proper Hindi Translation")
-            st.write(hindi_translation)
+            # Kannada in Hindi letters
+            st.markdown(f"**Kannada in Hindi letters:**  \n:orange[{kannada_in_hindi}]")
+
+            # Kannada in English phonetics
+            st.markdown(f"**Kannada in English phonetics:**  \n`{kannada_english}`")
 
         except Exception as e:
-            st.error(f"Error during translation: {e}")
+            st.error(f"Error: {e}")
+    else:
+        st.warning("Please enter some Hindi text to translate!")
