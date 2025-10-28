@@ -4,8 +4,31 @@ from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
 from aksharamukha.transliterate import process
 
-st.set_page_config(page_title="Hindi to Kannada Learning", layout="centered")
+# ------------------ PAGE CONFIG ------------------ #
+st.set_page_config(
+    page_title="Hindi to Kannada Learning",
+    page_icon="📝",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+    menu_items={
+        "Get Help": None,
+        "Report a bug": None,
+        "About": None
+    }
+)
 
+# ------------------ HIDE STREAMLIT UI ------------------ #
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+# ------------------ APP CONTENT ------------------ #
 st.title("📝 Learn Kannada using Hindi script")
 st.subheader("हिंदी अक्षरों का उपयोग करके कन्नड़ सीखें")
 
