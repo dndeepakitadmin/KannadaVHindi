@@ -28,12 +28,12 @@ st.title("🪔 Learn Kannada using Hindi Script")
 st.caption("Translate Hindi → Kannada → Learn with Hindi-letter Flashcards & Audio")
 
 # --- INPUT BOX ---
-text = st.text_area("Enter Hindi sentence (e.g., क्या कर रहे हो?)", height=120)
+text = st.text_area("Enter Hindi sentence (e.g., आप कैसे हैं?)", height=120)
 
 if st.button("Translate"):
     if text.strip():
         try:
-            # Hindi → Kannada full translation
+            # Hindi → Kannada translation
             kannada_text = GoogleTranslator(source="hi", target="kn").translate(text)
 
             # Kannada → Hindi transliteration
@@ -51,39 +51,36 @@ if st.button("Translate"):
 
             # --- FLASHCARDS SECTION ---
             st.markdown("---")
-            st.subheader("🧠 Word Flashcards (Hindi → Kannada with Audio)")
+            st.subheader("🧠 Word Flashcards (Hindi Letters + Kannada Audio)")
 
-            # Split into words
-            hindi_words = text.split()
+            # Split both versions word-by-word (to sync transliteration + audio)
             kannada_words = kannada_text.split()
             kannada_hindi_words = kannada_in_hindi.split()
 
             cols = st.columns(3)
 
-            for i, (src_hi, word_kn, word_hi) in enumerate(zip(hindi_words, kannada_words, kannada_hindi_words)):
+            for i, (word_kn, word_hi) in enumerate(zip(kannada_words, kannada_hindi_words)):
                 with cols[i % 3]:
-                    # Create Kannada audio for pronunciation
-                    tts = gTTS(text=word_kn, lang='kn')
-                    audio_fp = BytesIO()
-                    tts.write_to_fp(audio_fp)
-                    audio_fp.seek(0)
-
-                    # Flashcard layout
                     card_html = f"""
                     <div style="
                         background-color:#fffbe6;
                         border-radius:15px;
                         padding:20px;
-                        margin:10px;
+                        margin:8px;
                         text-align:center;
                         box-shadow:0 2px 8px rgba(0,0,0,0.15);
-                        border:1px solid #f0d96f;">
-                        <h3 style="color:#000;">{src_hi}</h3>
-                        <p style="font-size:18px; color:#c77902;">→ {word_hi}</p>
-                        <p style="font-size:13px; color:#555;">(Kannada Audio)</p>
+                        border: 1px solid #f0d96f;">
+                        <h3 style="color:#c77902;">{word_hi}</h3>
+                        <p style="font-size:14px;color:#555;">(Kannada Audio)</p>
                     </div>
                     """
                     st.markdown(card_html, unsafe_allow_html=True)
+
+                    # Kannada pronunciation audio
+                    tts = gTTS(text=word_kn, lang='kn')
+                    audio_fp = BytesIO()
+                    tts.write_to_fp(audio_fp)
+                    audio_fp.seek(0)
                     st.audio(audio_fp, format='audio/mp3')
 
         except Exception as e:
