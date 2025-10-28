@@ -1,5 +1,5 @@
 streamlit
 deep-translator
-indic-transliteration
-aksharamukha
 gtts
+aksharamukha
+indic-transliteration
